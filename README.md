@@ -16,14 +16,14 @@ Example for vectra_api_client to export and import data to/from csv format
 
 ## Configuration:
   1. conf/config.json
-    "vec_he": Vectra Brain IP or FQDN,
-    "vec_api_token": Vectra_api_token,
-    "max_page_number" : Maxumum number of pages ,
-    "max_page_size" : Maxumum result per page,
-    "vec_api_version" :  "v2.5",
-    "work_dir": The directory of result or imput files. Default is{ Linux: "/tmp/api_work" , Windows: "c:/tmp/api_work" 
-    "output_file_suffix" : "output",
-    "push_csv": "push_csv.csv"
+- "vec_he": Vectra Brain IP or FQDN
+- "vec_api_token": Vectra_api_token
+-  "max_page_number" : Maxumum number of pages 
+-   max_page_size" : Maxumum result per page
+-   vec_api_version" :  "v2.5"
+- "work_dir": The directory of result or imput files. Default is{ Linux: "/tmp/api_work" , Windows: "c:/tmp/api_work" 
+- "output_file_suffix" : "output",
+- "push_csv": "push_csv.csv"
 
 ## Input/Output
   The files are saved in conf directory with 

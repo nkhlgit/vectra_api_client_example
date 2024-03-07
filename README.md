@@ -12,7 +12,7 @@ Example for vectra_api_client to export and import data to/from csv format
      - get_mamanger =  to pull the data in bulk
      - push_manager = To created data in bulk. create input file. refer Input/Output: push_groups_csv file
      - Patch manager to edit data in bulk  
-  3. Python3 run.py
+  3. Python3 ./src/run.py
 
 ## Configuration:
   1. conf/config.json

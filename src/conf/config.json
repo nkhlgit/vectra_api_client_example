@@ -1,0 +1,10 @@
+{
+    "vec_he": "",
+    "vec_api_token": "",
+    "max_page_number" : 20,
+    "max_page_size" : 500,
+    "vec_api_version" :  "v2.5",
+    "work_dir": "/tmp/api_work", 
+    "output_file_suffix" : "output",
+    "push_csv": "push_csv.csv"
+}

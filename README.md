@@ -1,10 +1,10 @@
 # vectra_api_client_example
 Example for vectra_api_client to export and import data to/from csv format
 
-**Important Note**: 
+## Important Note: 
   This is not Vectra's official repo. I have created it out of my onw intrest. It's  pupose is to show example of ways to export and import files. I have performed very basic testing. Please read the code carefully and do your own research and testing before adopting it. 
 
-Usage:
+## Usage:
   1.Configure the  
     - conf/config.json. Refer configuration:
   
@@ -14,7 +14,7 @@ Usage:
      - Patch manager to edit data in bulk  
   3. Python3 run.py
 
-Configuration:
+## Configuration:
   1. conf/config.json
     "vec_he": Vectra Brain IP or FQDN,
     "vec_api_token": Vectra_api_token,
@@ -25,7 +25,7 @@ Configuration:
     "output_file_suffix" : "output",
     "push_csv": "push_csv.csv"
 
-Input/Output
+## Input/Output
   The files are saved in conf directory with 
   1. Output: output_groups_csv.csv contain all the details sepcifc extension. I have tsted it only with hosts and groups.
      Columns : Dynamic ; created based on keys in response .  

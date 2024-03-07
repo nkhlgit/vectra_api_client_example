@@ -1,14 +1,3 @@
-#!/usr/bin/env python
-"""
-# Author: Nikhil Singh
-# Email: nikhil.eltrx@gmail.com
-# Purpose: Pull hosts data from Vectra brain using API and sve the output json file defined in conf file..
-# Usage: 
-##   - install Python 3
-##   - configure config.json
-##   - 
-#Compatiblity_tested: Python3, VEctra Brain: 8.2 , API version : 2.5 :
-"""
 
 import logging
 from helper.gateway import portal, prepare
@@ -58,6 +47,6 @@ def get_manager(ext):
 if __name__ == '__main__':
     ext = 'groups'
     #get_manager(ext)
-    push_manager(ext)
+    #push_manager(ext)
     #patch_manager(ext)
 

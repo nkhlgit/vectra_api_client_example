@@ -46,7 +46,7 @@ class pathfinder():
         data_list_csv = to_csv(ext ,data_list)
         csv_writer.writerows(data_list_csv)
 
-    def save_to_file(self,ext : str, data_list : list):
+    def save_to_file(self,ext : str, data_list : list) -> None:
         work_dir = self.get_work_dir(create= True)
         if len(data_list) < 1 or len(self.file_type) < 1:
             print(f'Cannot save the result : {data_list=} ; {self.file_type=}')
@@ -68,9 +68,9 @@ class pathfinder():
             print(f'{work_dir=}" do not exist')
             return
         in_file_key = f'{method}_{ext}_csv'
-        push_csv =  work_dir + '/' + conf.get(in_file_key ,f'{in_file_key}.csv') 
-        push_csv_file = open(push_csv,'r', newline='')
-        csv_reader = csv.DictReader(push_csv_file)
+        post_csv =  work_dir + '/' + conf.get(in_file_key ,f'{in_file_key}.csv') 
+        post_csv_file = open(post_csv,'r', newline='')
+        csv_reader = csv.DictReader(post_csv_file)
         data_list = list(csv_reader)
         for data in data_list:
             data['members'] = data['members'].split(',')

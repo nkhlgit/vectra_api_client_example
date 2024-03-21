@@ -7,14 +7,9 @@ Example for vectra_api_client to export and import data to/from csv format
 
 
 ## Usage:
-  1.Configure the  
-    - conf/config.json. Refer configuration:
+  1.Configure the file "./src/conf/config.json". Refer configuration:
   
-  2. For POST and PATCH configure the file at location specified in key "work_dir" in /src/conf/config.json.
-     - The file 'name'should be like {mode}_{extension}_csv.CSV and steacture are static.Here is example:
-        For
-       - {extnsion : groups , mode : post} ;  the file should be "post_groups_csv.csv"
-       - {extnsion ; groups,  mode : patch ;  the file should be "patch_groups_csv.csv"
+  2.  Refer to INPUT section of the document:
  
   4.  Python3 run.py  -e <extension> -m <mode>.
      
@@ -44,11 +39,16 @@ options:
 - "output_file_suffix" : "output",
 - "push_csv": "push_csv.csv"
 
-## Input/Output
-  The files are saved in conf directory with 
-  1. Output: output_groups_csv.csv contain all the details sepcifc extension. I have tsted it only with hosts and groups.
-     Columns : Dynamic ; created based on keys in response .  
-  2. push_groups_csv: The data to create new extension objects per row in file.
+## Input
+For POST and PATCH configure the file at location specified in key "work_dir" in /src/conf/config.json.
+- File Name: The file 'name'should be like {mode}_{extension}_csv.CSV and steacture are static.Here is example:
+        For
+       - {extnsion : groups , mode : post} ;  the file should be "post_groups_csv.csv"
+       - {extnsion ; groups,  mode : patch ;  the file should be "patch_groups_csv.csv"
+- File Format: Refer to input feild from API document as set them as column.
+  Once extra columns is 'member_name' to add the memebers of specific name.
+  ```
+    2. push_groups_csv: The data to create new extension objects per row in file.
      Exampe for Group:
      name: Name of the group
      description:description
@@ -63,3 +63,12 @@ options:
      type: host or domainor ip
      members: menebers of grousp. For hosts please use the id of host.
      Note: if the folwing feild ( ID or Name or description) must be present .
+  ```       
+
+
+
+## Output
+  The files are saved in conf directory with 
+  1. Output: output_groups_csv.csv contain all the details sepcifc extension. I have tsted it only with hosts and groups.
+     Columns : Dynamic ; created based on keys in response .  
+

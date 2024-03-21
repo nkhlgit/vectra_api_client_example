@@ -4,15 +4,34 @@ Example for vectra_api_client to export and import data to/from csv format
 ## Important Note: 
   This is not Vectra's official repo. I have created it out of my onw intrest. It's  pupose is to show example of ways to export and import files. I have performed very basic testing. Please read the code carefully and do your own research and testing before adopting it. 
 
+
+
 ## Usage:
   1.Configure the  
     - conf/config.json. Refer configuration:
   
-  2. unhash run.py  for specific function operation.
-     - get_mamanger =  to pull the data in bulk
-     - push_manager = To created data in bulk. create input file. refer Input/Output: push_groups_csv file
-     - Patch manager to edit data in bulk  
-  3. Python3 ./src/run.py
+  2. For POST and PATCH configure the file at location specified in key "work_dir" in /src/conf/config.json.
+     - The file 'name'should be like {mode}_{extension}_csv.CSV and steacture are static.Here is example:
+        For
+       - {extnsion : groups , mode : post} ;  the file should be "post_groups_csv.csv"
+       - {extnsion ; groups,  mode : patch ;  the file should be "patch_groups_csv.csv"
+ 
+  4.  Python3 run.py  -e <extension> -m <mode>.
+     
+```
+run.py --help            
+usage: run.py [-h] --extension {groups,hosts,rule} --mode {get,post,patch}
+
+Make API calls for bulk operation on Vectra Brain
+
+options:
+  -h, --help            show this help message and exit
+  --extension {groups,hosts,rule}, -e {groups,hosts,rule}
+                        Extension of API example hosts, groups, rules     
+  --mode {get,post,patch}, -m {get,post,patch}
+                        Mode of operaton example GET, POST, PATCH
+```  
+
 
 ## Configuration:
   1. conf/config.json

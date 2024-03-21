@@ -26,14 +26,14 @@ class portal():
         result_data = []
         send_query = 'yes'
         url_final = self.rq['vec_base_url'] + f'/{ext}'
-        print(f'sensing request to {url_final=}')
+        #print(f'sensing request to {url_final=}')
         while send_query is not None:
             payload['page'] += 1 
             if conf.get('max_page_number', 500) <  payload['page']:
                 print('Stopping at Maximum page count of intetration: {}'.format(conf.get('max_page_number', 500)))
                 break
             response = requests.get(url=url_final, params=payload, verify=False, headers=self.rq['headers'])
-            print(response)
+            #print(response)
             result = response.json()
             if result is None:
                 continue
@@ -44,12 +44,13 @@ class portal():
                 continue
         return result_results
     
-    def push_one(self, ext, data):
+    def post_one(self, ext, data):
         data_json = json.dumps(data)
         url_final = self.rq['vec_base_url'] + f'/{ext}'
         response = requests.post(url=url_final, data=data_json, verify=False, headers=self.rq['headers'])
         if response.ok:
-            print(f'Request sucessfull: {response.text=}')
+            #print(f'Request sucessfull: {response.text=}')
+            pass
         else:
             print(f'Got some error in response: {response.text=}')
 
@@ -59,20 +60,11 @@ class portal():
         print(f'sensing request to {url_final=}')
         response = requests.patch(url=url_final, data=data_json, verify=False, headers=self.rq['headers'])
         if response.ok:
-            print(f'Request sucessfull: {response.text=}')
+            #print(f'Request sucessfull: {response.text=}')
+            pass
         else:
             print(f'Got some error in response: {response.text=}')
 
 
-class prepare():
-    def __init__(self, ext) -> None:
-        self.ext = ext
 
-    def get_data_refrs(self):
-        if self.ext == 'groups':
-            return 'name description'.split()   
 
-    def accepted_keys(self):
-        if self.ext == 'groups':
-            return 'name description type members'.split()
-            

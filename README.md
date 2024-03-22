@@ -47,25 +47,26 @@ For POST and PATCH configure the file at location specified in key "work_dir" in
        - {extnsion ; groups,  mode : patch ;  the file should be "patch_groups_csv.csv"
 - File Format: Refer to input feild from API document as set them as column.
   Once extra columns is 'member_name' to add the memebers of specific name.
-  ```
+
+  #### Groups 
     2. push_groups_csv: The data to create new extension objects per row in file.
-     Exampe for Group:
-     name: Name of the group
-     description:description
-     type: host or domainor ip
-     members: menebers of grousp. For hosts please use the id of host.
+        Mandotery : Name
+     - Exampe for Group:
+     - name: Name of the group
+     - description:description
+     - type: host or domainor ip
+     - members: menebers of groups. For hosts please use the id of host.
+     - member_name: name of the memeber. It apply onlky to host type.
+    
        
-  3. patch_groups_csv The data to update extension objects per row in file.
-     Exampe for Group: 
-     id: of the group . 
-     name: Name of the group
-     description:description
-     type: host or domainor ip
-     members: menebers of grousp. For hosts please use the id of host.
+  4. patch_groups_csv The data to update extension objects per row in file.
+     Mandotery: One of id, name, description (perference in exact sequence) to find the refernce group. 
+     - id: of the group . 
+     - name: Name of the group
+     - description:description
+     - type: host or domainor ip
+     - members: menebers of grousp. For hosts please use the id of host.
      Note: if the folwing feild ( ID or Name or description) must be present .
-  ```       
-
-
 
 ## Output
   The files are saved in conf directory with 

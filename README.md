@@ -40,7 +40,7 @@ options:
 - "push_csv": "push_csv.csv"
 
 ## Input
-For POST and PATCH configure the file at location specified in key "work_dir" in /src/conf/config.json. Please refer the example from "input_example" folder.
+For POST and PATCH configure the file at location specified in key "work_dir" in [config.json](/src/conf/config.json). Please refer the example from [input_example](input_example) folder.
 - File Name: The file 'name'should be like {mode}_{extension}_csv.CSV and steacture are static.Here is example:
         For
        - {extnsion : groups , mode : post} ;  the file should be "post_groups_csv.csv"
@@ -48,24 +48,22 @@ For POST and PATCH configure the file at location specified in key "work_dir" in
 - File Format: Refer to input feild from API document as set them as column.
   Once extra columns is 'member_name' to add the memebers of specific name.
 
-  #### Groups 
-    2. push_groups_csv: The data to create new extension objects per row in file.
-        Mandotery : Name
-     - Exampe for Group:
-     - name: Name of the group
-     - description:description
-     - type: host or domainor ip
-     - members: menebers of groups. For hosts please use the id of host.
-     - member_name: name of the memeber. It apply onlky to host type.
+#### Groups
+* push: push_groups_csv: The data to create new extension objects per row in file.
+  Mandotery : Name
+  * name: Name of the group
+  * description:description
+  * type: host or domainor ip
+  * members: menebers of groups. For hosts please use the id of host.
+  * member_name: name of the memeber. It apply onlky to host type.
     
-       
-  4. patch_groups_csv The data to update extension objects per row in file.
-     Mandotery: One of id, name, description (perference in exact sequence) to find the refernce group. 
-     - id: of the group . 
-     - name: Name of the group
-     - description:description
-     - type: host or domainor ip
-     - members: menebers of grousp. For hosts please use the id of host.
+* patch: patch_groups_csv The data to update extension objects per row in file.
+  Mandotery: One of id, name, description (perference in exact sequence) to find the refernce group.
+  * id: of the group .
+  * name: Name of the group
+  * description:description
+  * type: host or domainor ip
+  * members: menebers of grousp. For hosts please use the id of host.
      Note: if the folwing feild ( ID or Name or description) must be present .
 
 ## Output

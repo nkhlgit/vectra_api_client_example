@@ -2,8 +2,11 @@ import argparse
 import logging
 from helper.gateway import portal
 from helper.utils import pathfinder
+from helper.settings import valid_modes
+log = logging.getLogger(__name__)
 pf = pathfinder()
 p = portal()  
+
 
 class base_extension():
 
@@ -31,16 +34,16 @@ class base_extension():
                         query_1[key] = key_val
                         break
                 if not query_1:
-                    print(f'Can find refrence id or name or description of ext to update')
+                    log.error(f'Can find refrence id or name or description of ext to update')
                     continue
                 #cmnt: get as many data for extension this will be used toget id to post data
                 exts = p.get_many(self.ext, query = query_1)
-                #print(f'log: {exts=}')
+                log.debug(f'log: {exts=}')
                 if isinstance(exts, list) and len(exts) > 0:
-                    #print(f'Got {exts[0]=}')
+                    log.debug(f'Got {exts[0]=}')
                     data_id  = exts[0].get('id')
                 else:
-                    print(f'can not find the {self.ext=} id in {query_1=}')
+                    log.error(f'can not find the {self.ext=} id in {query_1=}')
                     continue
             clean_data = self.get_clean_data(data)
             p.patch_one(self.ext, data_id, clean_data)
@@ -49,12 +52,13 @@ class base_extension():
         ext = f'search/{self.ext}'
         query_1 = {'query_string': query_string} 
         search_results = p.get_many(ext, query = query_1) 
-        #print(search_results)
+        log.debug(search_results)
         return search_results
     
 class groups(base_extension):
     def __init__(self):
         self.ext = 'groups'
+        self.supported_mode = valid_modes.get('get_port_patch', None)
         #for Post and patch
         self.valid_columns = 'name description type members'.split()
         self.data_prim_keys = 'name description'.split()   
@@ -69,11 +73,11 @@ class groups(base_extension):
                 name_ids = []
                 memeber_name = memeber_name.strip()
                 query_string = f'host.name:"{memeber_name}"'
-                print(query_string)
+                log.info(query_string)
                 hst = hosts()
                 name_members = hst.search_manager(query_string )
                 if name_members is None or len(name_members) < 1:
-                    print(f'member result no sutable:{name_members}')
+                    log.error(f'member result no sutable:{name_members}')
                     continue
                 for name_member in name_members:
                     name_ids.append(name_member['id'])
@@ -89,9 +93,16 @@ class groups(base_extension):
 class hosts(base_extension):
     def __init__(self):
         self.ext = 'hosts'
+        self.supported_mode = valid_modes.get('get', None)
     
 
 class rules(base_extension):
     def __init__(self):
         self.ext = 'rules'
+        self.supported_mode = valid_modes.get('get', None)
 
+ext_cls = {
+    'groups' : groups,
+    'hosts': hosts,
+    'rules': rules,
+}

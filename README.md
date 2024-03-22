@@ -40,7 +40,7 @@ options:
 - "push_csv": "push_csv.csv"
 
 ## Input
-For POST and PATCH configure the file at location specified in key "work_dir" in /src/conf/config.json.
+For POST and PATCH configure the file at location specified in key "work_dir" in /src/conf/config.json. Please refer the example from "input_example" folder.
 - File Name: The file 'name'should be like {mode}_{extension}_csv.CSV and steacture are static.Here is example:
         For
        - {extnsion : groups , mode : post} ;  the file should be "post_groups_csv.csv"

@@ -1,24 +1,54 @@
-from . import extension_helper as e
+import json
+import os
+import logging
+log = logging.getLogger(__name__)
+
+#doc ger configuration
+def get_conf():
+    script_dir = os.path.realpath(os.path.dirname(__file__))
+    conf_file_name = 'config.json'
+    conf_file = f'{script_dir}/../conf/{conf_file_name}'
+    f = open(conf_file)
+    conf = json.load(f)
+    f.close()
+    return conf
+conf = get_conf()
+
+loglevel_dict = { 
+    'debug' : logging.DEBUG,
+    'info' : logging.INFO,
+     'WARN' : logging.WARN,
+     'error': logging.ERROR,
+     'critical': logging.CRITICAL,
+     'fetal' : logging.FATAL
+}    
+loglevel = loglevel_dict.get(conf.get('loglevel', 'info'), logging.INFO)
+
+#doc get_query for future get static query
+def get_query():
+    script_dir = os.path.realpath(os.path.dirname(__file__))
+    query_file_name = 'config.json'
+    query_file = f'{script_dir}/{query_file_name}'
+    f = open(query_file)
+    query = json.load(f)
+    f.close()
+    return query
+
 
 #doc: define the local values
-get = 'get'
-post = 'post'
-patch = 'patch'
-hosts = 'hosts'
-groups = 'groups'
-rules = 'rule'
-
-#mapping of extension vrs class
-mode_dict = {
-    groups : e.groups,
-    hosts: e.hosts,
-    rules: e.rules,
+valid_modes = {
+    'get' : ['get'],
+    'get_post' : ['get','post'],
+    'get_post_patch' : ['get','post', 'patch']
 }
 
 
-ext_mode = {
-    hosts: {get},
-    groups:{get, post, patch},
-    rules: {get},
-}
+class pnt():
+    def error(text : str) -> str:
+        return '\033[31m' + text + '\033[0m'
 
+    def warn(text : str) -> str:
+        return '\033[33m' + text + '\033[0m'
+
+    def info(text : str) -> str:
+        return '\033[32m' + text + '\033[0m'

@@ -3,31 +3,15 @@ import json
 import csv
 from pathlib import Path
 from helper.csv_util import to_csv
-
-def get_conf():
-    script_dir = os.path.realpath(os.path.dirname(__file__))
-    conf_file_name = 'config.json'
-    conf_file = f'{script_dir}/../conf/{conf_file_name}'
-    f = open(conf_file)
-    conf = json.load(f)
-    f.close()
-    return conf
-conf = get_conf()
-
-def get_query():
-    script_dir = os.path.realpath(os.path.dirname(__file__))
-    query_file_name = 'config.json'
-    query_file = f'{script_dir}/{query_file_name}'
-    f = open(query_file)
-    query = json.load(f)
-    f.close()
-    return query
+from .settings import conf
+import logging
+log = logging.getLogger(__name__)
 
 class pathfinder():
 
     def __init__(self) -> None:
         self.script_dir = os.path.realpath(os.path.dirname(__file__))
-        self.log_file = f'{self.script_dir}/api_logs.log'
+        self.log_file = f'{self.get_work_dir(create = True)}/api_logs.log'
         self.file_type = ['json','csv']
                         
     def get_work_dir(self, create: bool = False) -> Path:
@@ -49,7 +33,7 @@ class pathfinder():
     def save_to_file(self,ext : str, data_list : list) -> None:
         work_dir = self.get_work_dir(create= True)
         if len(data_list) < 1 or len(self.file_type) < 1:
-            print(f'Cannot save the result : {data_list=} ; {self.file_type=}')
+            log.error(f'Cannot save the result : {data_list=} ; {self.file_type=}')
             return
         output_file_suffix = conf.get('output_file_suffix', 'output')
         output_file_suffix_ext = f'{output_file_suffix}_{ext}'
@@ -61,11 +45,11 @@ class pathfinder():
             if t == 'json':
                 json.dump(data_list, output_file)
             output_file.close()
-            print(f'saved the result in {work_dir}/{output_file_name}')
+            log.info(f'saved the result in {work_dir}/{output_file_name}')
 
     def get_input(self,method : str, ext : str) -> list :
         if (work_dir := self.get_work_dir(create=False)) is None:
-            print(f'{work_dir=}" do not exist')
+            log.info(f'{work_dir=}" do not exist')
             return
         in_file_key = f'{method}_{ext}_csv'
         post_csv =  work_dir + '/' + conf.get(in_file_key ,f'{in_file_key}.csv') 
@@ -75,5 +59,5 @@ class pathfinder():
         for data in data_list:
             data['members'] = data['members'].split(',')
         if len(data_list) < 1:
-            print(' Zero input read from file : {data_list}')
+            log.info(' Zero input read from file : {data_list}')
         return data_list

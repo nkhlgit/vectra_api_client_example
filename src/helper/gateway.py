@@ -1,12 +1,17 @@
 import json
-from helper.utils import conf 
+from helper.settings import conf, pnt 
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+import logging
+log = logging.getLogger(__name__)
+
+
 class portal():
     def __init__(self) -> None:
         self.get_req_param()
+        self.TIMEOUT = 10
 
     def get_req_param(self):
         rq = {
@@ -26,44 +31,63 @@ class portal():
         result_data = []
         send_query = 'yes'
         url_final = self.rq['vec_base_url'] + f'/{ext}'
-        #print(f'sensing request to {url_final=}')
+        log.info(f'sensing request to {url_final=}')
+        log.info(pnt.info(f'sensing request to {url_final=}'))
         while send_query is not None:
             payload['page'] += 1 
             if conf.get('max_page_number', 500) <  payload['page']:
-                print('Stopping at Maximum page count of intetration: {}'.format(conf.get('max_page_number', 500)))
+                log.info('Stopping at Maximum page count of intetration: {}'.format(conf.get('max_page_number', 500)))
+                log.info(pnt.info('Stopping at Maximum page count of intetration: {}'.format(conf.get('max_page_number', 500))))
                 break
-            response = requests.get(url=url_final, params=payload, verify=False, headers=self.rq['headers'])
-            #print(response)
+            try:
+                response = requests.get(url=url_final, 
+                                        params=payload, 
+                                        verify=False, 
+                                        headers=self.rq['headers'], 
+                                        timeout=self.TIMEOUT,
+                                        )
+                if response.ok:
+                    log.debug(f'Request sucessfull: {response.text=}')
+                else:
+                    log.error(f'Got some error in response: {response.text=}')
+            except Exception as e:
+                log.fatal('Error offcured in request: {e}')
+                break
             result = response.json()
             if result is None:
                 continue
-            send_query = result.get('next')
+            send_query = result.get('next', None)
             result_results = result.get('results')
             if result_results is None:
                 result_data.append(result_results)
                 continue
-        return result_results
+        return result_data
     
     def post_one(self, ext, data):
         data_json = json.dumps(data)
         url_final = self.rq['vec_base_url'] + f'/{ext}'
-        response = requests.post(url=url_final, data=data_json, verify=False, headers=self.rq['headers'])
-        if response.ok:
-            #print(f'Request sucessfull: {response.text=}')
-            pass
-        else:
-            print(f'Got some error in response: {response.text=}')
+        try:
+            response = requests.post(url=url_final, data=data_json, verify=False, headers=self.rq['headers'],timeout=self.TIMEOUT)
+            if response.ok:
+                log.debug(f'Request sucessfull: {response.text=}')
+            else:
+                log.error(f'Got some error in response: {response.text=}')
+        except Exception as e:
+                log.error('Error offcured in request: {e}')
 
     def patch_one(self, ext, id, data):
         data_json = json.dumps(data)
         url_final = self.rq['vec_base_url'] + f'/{ext}/{id}'
-        print(f'sensing request to {url_final=}')
-        response = requests.patch(url=url_final, data=data_json, verify=False, headers=self.rq['headers'])
-        if response.ok:
-            #print(f'Request sucessfull: {response.text=}')
-            pass
-        else:
-            print(f'Got some error in response: {response.text=}')
+        log.info(f'sensing request to {url_final=}')
+        try:
+            response = requests.patch(url=url_final, data=data_json, verify=False, headers=self.rq['headers'], timeout=self.TIMEOUT)
+            if response.ok:
+                log.debug(f'Request sucessfull: {response.text=}')
+            else:
+                log.error(f'Got some error in response: {response.text=}')
+        except Exception as e:
+                log.error('Error offcured in request: {e}')
+
 
 
 

@@ -14,9 +14,9 @@ import logging
 from helper.gateway import portal
 from helper.utils import pathfinder  
 from helper.settings import conf, pnt, loglevel
-from helper.extension_helper import cls_ext_map
+from helper.extension_helper import get_exts
 
-cls_exts = cls_ext_map()
+exts : dict = get_exts()
 pf = pathfinder()
 p = portal()
 #mapping of extension vrs class
@@ -33,13 +33,13 @@ def parse_args() -> dict:
     argy = argparse.ArgumentParser(description='Make API calls for bulk operation on Vectra Brain')
     argy.add_argument("--extension", "-e", 
                       type = str.lower, 
-                      help="Extension of API example hosts, groups, rules", 
+                      help=f'Extension of API: \n\t {" ".join(exts.keys())}', 
                       required=True, 
                       #choices=cls_exts.all_exts(),
                       )
     argy.add_argument("--mode", "-m",
                       type = str.lower,
-                      help="Mode of operaton example GET, POST, PATCH ",
+                      help=f'Mode of operaton. Most of extension support only get mode. The overall options are: \n\t get post patch put delete.',
                       required=True, 
                       choices=['get','post', 'patch', 'put', 'delete'],
                       )
@@ -49,23 +49,23 @@ def parse_args() -> dict:
 #doc def main is the starting point of project
 def main(args : dict) -> None:
     log.info('start_main')
-    #doc get class from settings 
-    #ext = ext_cls.get(args.extension, None)
-    all_exts = []
-    ext = cls_exts.get_cls(args.extension)
+    #doc var ext is dictionary of specific extension
+    ext : dict = exts.get(args.extension, None)
     if ext is None:
-            text = f'The supported extensions are:\n\t <{" ".join(cls_exts.all_exts())}>.\n You entered method <{args.extension}>'
+            text = f'The supported extensions are:\n\t <{" ".join(exts.keys())}>.\n You entered method <{args.extension}>'
             log.error(text)
             print(pnt.error(text))
             return
-    e= ext(args.extension)
-    #check if specific extension support called method
-    if args.mode not in e.supported_mode:
-        text = f'The supported methods on extension <{args.extension}> are <{e.supported_mode}>. You entered method <{args.mode}>'
-        log.error(text)
-        print(pnt.error(text))
-        return
 
+    #check if specific extension support called method
+    if args.mode not in ext.get('modes', None):
+        text = f'This API is configured and tested only with supported methods on extension <{args.extension}> are <{ext.get("modes")}>. \n \
+            You entered method <{args.mode}>.\n \
+            The program is not stoping however be ready for bumpy ride. \n'
+        log.warning(text)
+        print(pnt.warn(text))
+        return
+    e= ext.get('cls', None)(args.extension)
     match args.mode:
         case 'get':
             e.get()

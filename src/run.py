@@ -14,8 +14,9 @@ import logging
 from helper.gateway import portal
 from helper.utils import pathfinder  
 from helper.settings import conf, pnt, loglevel
-from helper.extension_helper import ext_cls
+from helper.extension_helper import cls_ext_map
 
+cls_exts = cls_ext_map()
 pf = pathfinder()
 p = portal()
 #mapping of extension vrs class
@@ -30,8 +31,18 @@ log = logging.getLogger(__name__)
 def parse_args() -> dict:
     log.info('===Start_parse_args===')
     argy = argparse.ArgumentParser(description='Make API calls for bulk operation on Vectra Brain')
-    argy.add_argument("--extension", "-e", type = str.lower, help="Extension of API example hosts, groups, rules", required=True, choices=ext_cls.keys())
-    argy.add_argument("--mode", "-m",type = str.lower,  help="Mode of operaton example GET, POST, PATCH ", required=True, choices=['get','post', 'patch'])
+    argy.add_argument("--extension", "-e", 
+                      type = str.lower, 
+                      help="Extension of API example hosts, groups, rules", 
+                      required=True, 
+                      #choices=cls_exts.all_exts(),
+                      )
+    argy.add_argument("--mode", "-m",
+                      type = str.lower,
+                      help="Mode of operaton example GET, POST, PATCH ",
+                      required=True, 
+                      choices=['get','post', 'patch', 'put', 'delete'],
+                      )
     args = argy.parse_args()
     return args
 
@@ -39,8 +50,15 @@ def parse_args() -> dict:
 def main(args : dict) -> None:
     log.info('start_main')
     #doc get class from settings 
-    ext = ext_cls[args.extension]
-    e= ext()
+    #ext = ext_cls.get(args.extension, None)
+    all_exts = []
+    ext = cls_exts.get_cls(args.extension)
+    if ext is None:
+            text = f'The supported extensions are:\n\t <{" ".join(cls_exts.all_exts())}>.\n You entered method <{args.extension}>'
+            log.error(text)
+            print(pnt.error(text))
+            return
+    e= ext(args.extension)
     #check if specific extension support called method
     if args.mode not in e.supported_mode:
         text = f'The supported methods on extension <{args.extension}> are <{e.supported_mode}>. You entered method <{args.mode}>'
@@ -55,6 +73,8 @@ def main(args : dict) -> None:
             e.post()
         case 'patch':
             e.patch()
+        case 'delete':
+            e.delete()
     log.info('stop_main')
 
 

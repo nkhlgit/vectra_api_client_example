@@ -1,4 +1,3 @@
-import argparse
 import logging
 from helper.gateway import portal
 from helper.utils import pathfinder
@@ -16,7 +15,7 @@ class base_extension():
     def post(self):    
         data_list= pf.get_input('post', self.ext)
         for data in data_list:
-            clean_data = self.get_clean_data(data)
+            clean_data = self.get_clean_data(data, 'post')
             p.post_one(self.ext, clean_data)
     
     def delete(self):    
@@ -71,7 +70,7 @@ class base_extension():
                 else:
                     log.error(f'can not find the {self.ext=} id in {query_1=}')
                     continue
-            clean_data = self.get_clean_data(data)
+            clean_data = self.get_clean_data(data, 'patch')
             p.patch_one(self.ext, data_id, clean_data)
 
     def search_manager(self, query_string ):
@@ -80,17 +79,28 @@ class base_extension():
         search_results = p.get_many(ext, query = query_1) 
         log.debug(search_results)
         return search_results
-    
+
+    #doc get_clean_data make ata clean for post or put or patch
+    def get_clean_data(self, data : dict, mode : str = 'patch') -> dict:
+        if mode == 'patch':
+            for k,v in data:
+                if v or v is None:
+                    del data[k]
+        drop_key = 'id url created_timestamp last_timestamp'.split()
+        for k in drop_key:
+            if k in data:
+                del data[k]
+        return data
+                
 class groups(base_extension):
     def __init__(self, ext : str = 'group' ):
         self.ext = ext
-        self.supported_mode = 'get post patch delete'.split()
         #for Post and patch
         self.valid_columns = 'name description type members'.split()
         self.data_prim_keys = 'name description'.split()   
 
     #doc def get_clean_data(self,data): prepare data to send for upload
-    def get_clean_data(self, data):
+    def get_clean_data(self, data : dict, mode : str = 'patch') -> dict:
         #doc this apply only for host
         if data.get('members', None) is not None:
             if not isinstance(data['members'], list): 
@@ -121,41 +131,35 @@ class groups(base_extension):
         
 
 class rules(base_extension):
-    def __init__(self, ext : str = 'group' ):
+    def __init__(self, ext : str = 'rules' ):
         self.ext = ext
-        self.supported_mode = 'get post patch delete'.split()
-        #for Post and patch
-        self.valid_columns = 'name description type members'.split()
-        self.data_prim_keys = 'name description'.split()   
+        #for post, put and patch
+        self.valid_columns = 'description enabled is_whitelist template additional_conditions source_conditions \
+            detection detection_category triage_category'.split()
+        self.data_prim_keys = 'description'.split()   
 
 class getter(base_extension):
     def __init__(self, ext):
         self.ext = ext
-        self.supported_mode = 'get'.split()
 
 
-class cls_ext_map():
-    def __init__(self) -> None:
-        getter_exts = 'accounts assignments assignment_outcomes audits campaigns detections \
-                 health hosts ip_addresses lockdown/account lockdown/host proxies rules search \
-                 sensor_token settings subnets tagging threatFeeds traffic usage/detect users \
-                 vectramatch/enablement vectra-match/status vectramatch/availabledevices vectra-match/rules \
-                  vectramatch/assignment vectra-match/alertstats vsensor'.split()
-        
-        self.cls_exts = {getter : getter_exts,
-                         groups : ['groups'],  
-                         }
-        
-    def get_cls(self,ext : str ):
-        for k,v in self.cls_exts.items():
-            if ext in v:
-                return k
-        return None
+def get_exts() -> dict:
+    exts = { 'groups' : {
+            'cls' : groups, 
+            'modes' :  'get post patch delete'.split() 
+                 },
+            'rules' : {
+            'cls' : rules, 
+            'modes' :  'get post patch delete'.split() 
+                 },
+    }
             
-    def all_exts(self) -> list:
-        ext_list = []
-        for exts in self.cls_exts.values():        
-            ext_list.extend(exts) 
-        ext_list.sort()
-        return ext_list
-
+    getter_exts = 'accounts assignments assignment_outcomes audits campaigns detections \
+             health hosts ip_addresses lockdown/account lockdown/host proxies search \
+             sensor_token settings subnets tagging threatFeeds traffic usage/detect users \
+             vectramatch/enablement vectra-match/status vectramatch/availabledevices vectra-match/rules \
+              vectramatch/assignment vectra-match/alertstats vsensor'.split()
+    for ext in getter_exts:
+        exts[ext] = {'cls' : getter, 'modes' : ['get']}
+    return exts
+        

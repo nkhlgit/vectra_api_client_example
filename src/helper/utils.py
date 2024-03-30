@@ -3,8 +3,10 @@ import json
 import csv
 from pathlib import Path
 from helper.csv_util import to_csv
-from .settings import conf
+from .settings import conf, pnt
 import logging
+import datetime
+
 log = logging.getLogger(__name__)
 
 class pathfinder():
@@ -36,7 +38,9 @@ class pathfinder():
             log.error(f'Cannot save the result : {data_list=} ; {self.file_type=}')
             return
         output_file_suffix = conf.get('output_file_suffix', 'output')
-        output_file_suffix_ext = f'{output_file_suffix}_{ext}'
+        now = datetime.datetime.now()
+        time_str =  now.strftime("%y%m%d%H%M%S")
+        output_file_suffix_ext = f'{output_file_suffix}_{ext}_{time_str}'
         for t in self.file_type:
             output_file_name = f'{output_file_suffix_ext}_{t}.{t}'
             output_file = open(f'{work_dir}/{output_file_name}', 'w+', newline='')
@@ -45,7 +49,9 @@ class pathfinder():
             if t == 'json':
                 json.dump(data_list, output_file)
             output_file.close()
-            log.info(f'saved the result in {work_dir}/{output_file_name}')
+            inf_msg = f'saved the result in {work_dir}/{output_file_name}'
+            print(pnt.info(inf_msg))
+            log.info(inf_msg)
 
     def get_input(self,method : str, ext : str) -> list :
         if (work_dir := self.get_work_dir(create=False)) is None:
@@ -56,8 +62,6 @@ class pathfinder():
         post_csv_file = open(post_csv,'r', newline='')
         csv_reader = csv.DictReader(post_csv_file)
         data_list = list(csv_reader)
-        for data in data_list:
-            data['members'] = data['members'].split(',')
         if len(data_list) < 1:
             log.info(' Zero input read from file : {data_list}')
         return data_list

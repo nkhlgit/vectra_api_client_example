@@ -3,6 +3,11 @@ import os
 import logging
 log = logging.getLogger(__name__)
 
+#constants
+constants = {
+    'max_vec_api_version' : 'v2.5'
+}
+
 #doc ger configuration
 def get_conf():
     script_dir = os.path.realpath(os.path.dirname(__file__))
@@ -13,6 +18,8 @@ def get_conf():
     f.close()
     return conf
 conf = get_conf()
+
+
 
 loglevel_dict = { 
     'debug' : logging.DEBUG,
@@ -34,13 +41,6 @@ def get_query():
     f.close()
     return query
 
-
-#doc: define the local values
-valid_modes = {
-    'get' : ['get'],
-    'get_post' : ['get','post'],
-    'get_post_patch' : ['get','post', 'patch']
-}
 
 
 class pnt():

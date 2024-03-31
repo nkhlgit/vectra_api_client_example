@@ -14,17 +14,20 @@ Example for vectra_api_client to export and import data to/from csv format
   4.  Python3 run.py  -e <extension> -m <mode>.
      
 ```
-run.py --help            
-usage: run.py [-h] --extension {groups,hosts,rule} --mode {get,post,patch}
+python .\run.py --help
+start_vapi_client
+usage: run.py [-h] --extension EXTENSION --mode {get,post,patch,put,delete}
 
 Make API calls for bulk operation on Vectra Brain
 
 options:
   -h, --help            show this help message and exit
-  --extension {groups,hosts,rule}, -e {groups,hosts,rule}
-                        Extension of API example hosts, groups, rules     
-  --mode {get,post,patch}, -m {get,post,patch}
-                        Mode of operaton example GET, POST, PATCH
+  --extension EXTENSION, -e EXTENSION
+                        Extension of API: groups rules accounts assignments assignment_outcomes audits campaigns detections health hosts ip_addresses lockdown/account
+                        lockdown/host proxies search sensor_token settings subnets tagging threatFeeds traffic usage/detect users vectramatch/enablement vectra-match/status      
+                        vectramatch/availabledevices vectra-match/rules vectramatch/assignment vectra-match/alertstats vsensor
+  --mode {get,post,patch,put,delete}, -m {get,post,patch,put,delete}
+                        Mode of operaton. Most of extension support only get mode. The overall options are: get post patch put delete.
 ```  
 
 

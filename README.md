@@ -4,6 +4,10 @@ Example for vectra_api_client to export and import data to/from csv format
 ## Important Note: 
   This is not Vectra's official repo. I have created it out of my onw intrest. It's  pupose is to show example of ways to export and import files. I have performed very basic testing. Please read the code carefully and do your own research and testing before adopting it. 
 
+Tested extension(mode) are:
+* hosts (get)
+* groups (get post patch)
+* rules ( get post)
 
 
 ## Usage:

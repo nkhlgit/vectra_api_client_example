@@ -75,6 +75,7 @@ def main(args : dict) -> None:
             e.patch()
         case 'delete':
             e.delete()
+    e.log_stats()
     log.info('stop_main')
 
 

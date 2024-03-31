@@ -25,7 +25,13 @@ class pathfinder():
         Path(work_dir).mkdir(parents=True, exist_ok=True)
         return work_dir
     
-    def save_csv(self, ext, data_list: list, output_file ):
+    def save_csv(self, ext, data : list, output_file ):
+        data_list = []
+        if isinstance(data, dict):
+            for k,v in data.items():
+                data_list.append({ 'key' : k, 'value' : v})
+        else:
+            data_list = data
         field_names = data_list[0].keys()
         csv_writer = csv.DictWriter(output_file, fieldnames=field_names)
         csv_writer.writeheader()
@@ -65,3 +71,19 @@ class pathfinder():
         if len(data_list) < 1:
             log.info(' Zero input read from file : {data_list}')
         return data_list
+
+class mydb():
+
+    tub = {}
+
+    @classmethod
+    def add_name(cls, name : str, ids : list ):
+        cls.tub[name] = ids
+    @classmethod
+    def get_tub(cls):
+        return cls.tub
+    @classmethod
+    def get_tub_member(cls, member):
+        return cls.tub.get(member, None)
+
+    

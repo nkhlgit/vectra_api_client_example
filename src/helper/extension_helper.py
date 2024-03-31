@@ -1,6 +1,7 @@
 import logging
 from helper.gateway import portal
-from helper.utils import pathfinder
+from helper.utils import pathfinder, mydb
+from helper.settings import pnt
 log = logging.getLogger(__name__)
 pf = pathfinder()
 p = portal()  
@@ -91,6 +92,18 @@ class base_extension():
             if k in data:
                 del data[k]
         return data
+    
+    def log_stats(self) -> None:
+        tub = mydb.get_tub()
+        if tub or tub is not None:
+            f= f'{self.ext}_member_name_searched'
+            pf.save_to_file( f , tub)
+            msg = f'{len(tub)} memeber names searched. result are saved in :{f}'
+        else:
+            msg = f'No member Name queried'
+        log.info(msg)
+        print(pnt.info(msg))
+
                 
 class groups(base_extension):
     def __init__(self, ext : str = 'group' ):
@@ -108,21 +121,27 @@ class groups(base_extension):
         else:
             data['memeber'] = []
         if data['type'] == 'host' and (memebers_names_str := data.get('member_name', None)) is not None:
+            host_tub = {}
             memeber_ids = []
             memebers_names = memebers_names_str.split(',')
-
             for memeber_name in memebers_names:
                 name_ids = []
                 memeber_name = memeber_name.strip()
-                query_string = f'host.name:"{memeber_name}"'
-                log.info(query_string)
-                hst = getter('hosts')
-                name_members = hst.search_manager(query_string )
-                if name_members is None or len(name_members) < 1:
-                    log.error(f'member result no sutable:{name_members}')
+                if memeber_name in mydb.get_tub():
+                    name_ids = mydb.get_tub_member(memeber_name)
                     continue
-                for name_member in name_members:
-                    name_ids.append(name_member['id'])
+                else:                     
+                    query_string = f'host.name:"{memeber_name}"'
+                    log.info(query_string)
+                    hst = getter('hosts')
+                    name_members = hst.search_manager(query_string )
+                    if name_members is None or len(name_members) < 1:
+                        mydb.add_name( memeber_name, name_ids)
+                        log.error(f'member result no sutable:{name_members}')
+                        continue
+                    for name_member in name_members:
+                        name_ids.append(name_member['id'])
+                    mydb.add_name( memeber_name, name_ids)
                 memeber_ids.extend(name_ids)
             memeber_ids = list(set(memeber_ids))
             data['members'].extend(memeber_ids)

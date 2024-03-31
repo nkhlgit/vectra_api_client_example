@@ -2,6 +2,7 @@ import logging
 from helper.gateway import portal
 from helper.utils import pathfinder, mydb
 from helper.settings import pnt
+import json
 log = logging.getLogger(__name__)
 pf = pathfinder()
 p = portal()  
@@ -80,6 +81,23 @@ class base_extension():
         search_results = p.get_many(ext, query = query_1) 
         log.debug(search_results)
         return search_results
+    
+    def data_typing(self, data : dict) -> dict:
+        if self.clmns_bool or self.clmns_bool is not None:
+            for col_bool in self.clmns_bool:
+                if isinstance( (b := data.get(col_bool, None)), str):
+                    b = b.strip().lower()
+                    if b == 'true':
+                        data[col_bool] = True
+                    else:
+                        data[col_bool] = False
+        if self.clmns_dict or self.clmns_dict is not None:
+            for col_dict in self.clmns_dict:
+                if isinstance((ac := data.get(col_dict, None)), str):
+                    print(ac.replace('"','\"'))
+                    data[col_dict] = json.loads(ac.replace("'","\""))
+        return data
+            
 
     #doc get_clean_data make ata clean for post or put or patch
     def get_clean_data(self, data : dict, mode : str = 'patch') -> dict:
@@ -91,16 +109,17 @@ class base_extension():
         for k in drop_key:
             if k in data:
                 del data[k]
+        data = self.data_typing(data)
         return data
     
     def log_stats(self) -> None:
         tub = mydb.get_tub()
-        if tub or tub is not None:
+        if not tub or tub is None or len(tub) < 1:
+            msg = f'FYI only: No member_name queried'
+        else:
             f= f'{self.ext}_member_name_searched'
             pf.save_to_file( f , tub)
             msg = f'{len(tub)} memeber names searched. result are saved in :{f}'
-        else:
-            msg = f'No member Name queried'
         log.info(msg)
         print(pnt.info(msg))
 
@@ -153,9 +172,19 @@ class rules(base_extension):
     def __init__(self, ext : str = 'rules' ):
         self.ext = ext
         #for post, put and patch
-        self.valid_columns = 'description enabled is_whitelist template additional_conditions source_conditions \
+        self.valid_columns = 'description is_whitelist template additional_conditions source_conditions \
             detection detection_category triage_category'.split()
-        self.data_prim_keys = 'description'.split()   
+        self.data_prim_keys = 'description'.split()
+        self.clmns_bool = 'enabled is_whitelist template'.split()
+        self.clmns_dict =  'source_conditions additional_conditions'.split()
+
+    #doc def get_clean_data(self,data): prepare data to send for upload
+    def get_clean_data(self, data : dict, mode : str = 'patch') -> dict:
+        #doc this apply only for host
+        data = self.data_typing(data)
+        clean_data = {key: data[key] for key in self.valid_columns}
+        return  clean_data
+
 
 class getter(base_extension):
     def __init__(self, ext):

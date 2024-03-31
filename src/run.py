@@ -87,3 +87,4 @@ if __name__ == '__main__':
     text = 'stop_vapi_client'
     log.info(text)
     print(pnt.info(text))
+    print(pnt.info(f'Script finished! The operation logs are {pf.log_file}'))

@@ -1,8 +1,8 @@
 import json
 from helper.settings import conf, pnt, constants 
 import requests
-#from requests.packages.urllib3.exceptions import InsecureRequestWarning
-#requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 import logging
 log = logging.getLogger(__name__)
@@ -71,6 +71,7 @@ class portal():
     
     def post_one(self, ext, data):
         data_json = json.dumps(data)
+        log.debug(f'sending data: {data_json}')
         url_final = self.rq['vec_base_url'] + f'/{ext}'
         msg = f'sending POST request to {url_final=}'
         log.info(msg)
@@ -78,7 +79,9 @@ class portal():
         try:
             response = requests.post(url=url_final, data=data_json, verify=False, headers=self.rq['headers'],timeout=self.TIMEOUT)
             if response.ok:
-                log.debug(f'Request sucessfull: {response.text=}')
+                msg = f'Request sucessfull: {response.text=}'
+                print(pnt.info(msg))
+                log.info(msg)
             else:
                 err_msg = f'Got some error in response: {response.text=}'
                 print(pnt.error(err_msg))

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-# Author: Nikhil Singh
+# Author: Nikhil
 # Email: nikhil.eltrx@gmail.com
 # Purpose: perform GET, post, PATCH data at bulk on Vectra brain using API and sve the output json file defined in conf file..
 # Usage: 
@@ -11,14 +11,13 @@
 """
 import argparse
 import logging
-from helper.gateway import portal
 from helper.utils import pathfinder  
-from helper.settings import conf, pnt, loglevel
+from helper.settings import pnt, loglevel
 from helper.extension_helper import get_exts
+from helper.extension_main import extension_manager
 
 exts : dict = get_exts()
 pf = pathfinder()
-p = portal()
 #mapping of extension vrs class
 
 format_val = '%(asctime)-15s %(levelname)s:%(filename)s:%(lineno)d: %(message)s'
@@ -43,39 +42,21 @@ def parse_args() -> dict:
                       required=True, 
                       choices=['get','post', 'patch', 'put', 'delete'],
                       )
+    argy.add_argument("--query", "-q",
+                      type = str.lower,
+                      help=f'To use query with search extension',
+                      required=False, 
+                      )
     args = argy.parse_args()
     return args
 
 #doc def main is the starting point of project
 def main(args : dict) -> None:
     log.info('start_main')
-    #doc var ext is dictionary of specific extension
-    ext : dict = exts.get(args.extension, None)
-    if ext is None:
-            text = f'The supported extensions are:\n\t <{" ".join(exts.keys())}>.\n You entered method <{args.extension}>'
-            log.error(text)
-            print(pnt.error(text))
-            return
-
-    #check if specific extension support called method
-    if args.mode not in ext.get('modes', None):
-        text = f'This API is configured and tested only with supported methods on extension <{args.extension}> are <{ext.get("modes")}>. \n \
-            You entered method <{args.mode}>.\n \
-            The program is not stoping however be ready for bumpy ride. \n'
-        log.warning(text)
-        print(pnt.warn(text))
-        return
-    e= ext.get('cls', None)(args.extension)
-    match args.mode:
-        case 'get':
-            e.get()
-        case 'post':
-            e.post()
-        case 'patch':
-            e.patch()
-        case 'delete':
-            e.delete()
-    e.log_stats()
+    args_dict = vars(args)
+    print(pnt.info(f'args are : {args_dict}'))
+    em = extension_manager(**args_dict)
+    em.start()
     log.info('stop_main')
 
 

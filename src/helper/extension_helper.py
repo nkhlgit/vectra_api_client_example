@@ -9,9 +9,14 @@ p = portal()
 
 
 class base_extension():
+    def __init__(self, **kargs) -> None:
+        self.kargs = kargs
+        self.ext = self.kargs.get('extension', None)
+        if self.kargs.get('query', None) is not None:
+           self.query =  {'query_string': self.kargs.get('query')}
 
     def get(self):
-        data_list = p.get_many(self.ext)
+        data_list = p.get_many(self.ext, self.query)
         pf.save_to_file(self.ext , data_list)
 
     def post(self):    
@@ -76,7 +81,10 @@ class base_extension():
             p.patch_one(self.ext, data_id, clean_data)
 
     def search_manager(self, query_string ):
-        ext = f'search/{self.ext}'
+        if self.ext.startswith('search'):
+            ext = self.ext
+        else: 
+            ext = f'search/{self.ext}'
         query_1 = {'query_string': query_string} 
         search_results = p.get_many(ext, query = query_1) 
         log.debug(search_results)
@@ -94,7 +102,6 @@ class base_extension():
         if self.clmns_dict or self.clmns_dict is not None:
             for col_dict in self.clmns_dict:
                 if isinstance((ac := data.get(col_dict, None)), str):
-                    print(ac.replace('"','\"'))
                     data[col_dict] = json.loads(ac.replace("'","\""))
         return data
             
@@ -125,8 +132,8 @@ class base_extension():
 
                 
 class groups(base_extension):
-    def __init__(self, ext : str = 'group' ):
-        self.ext = ext
+    def __init__(self, **kargs ):
+        super().__init__(**kargs)
         #for Post and patch
         self.valid_columns = 'name description type members'.split()
         self.data_prim_keys = 'name description'.split()   
@@ -149,10 +156,14 @@ class groups(base_extension):
                 if memeber_name in mydb.get_tub():
                     name_ids = mydb.get_tub_member(memeber_name)
                     continue
-                else:                     
-                    query_string = f'host.name:"{memeber_name}"'
+                else:
+                    if '*' in memeber_name:
+                        query_string = f'host.name:{memeber_name}'
+                    else:
+                        query_string = f'host.name:"{memeber_name}"'
                     log.info(query_string)
-                    hst = getter('hosts')
+                    {'extension' : 'hosts'}
+                    hst = getter(**{'extension' : 'hosts'})
                     name_members = hst.search_manager(query_string )
                     if name_members is None or len(name_members) < 1:
                         mydb.add_name( memeber_name, name_ids)
@@ -169,8 +180,8 @@ class groups(base_extension):
         
 
 class rules(base_extension):
-    def __init__(self, ext : str = 'rules' ):
-        self.ext = ext
+    def __init__(self, **kargs ):
+        super().__init__(**kargs)
         #for post, put and patch
         self.valid_columns = 'description is_whitelist template additional_conditions source_conditions \
             detection detection_category triage_category'.split()
@@ -187,8 +198,9 @@ class rules(base_extension):
 
 
 class getter(base_extension):
-    def __init__(self, ext):
-        self.ext = ext
+    def __init__(self, **kargs):
+        super().__init__(**kargs)
+
 
 
 def get_exts() -> dict:
@@ -203,7 +215,7 @@ def get_exts() -> dict:
     }
             
     getter_exts = 'accounts assignments assignment_outcomes audits campaigns detections \
-             health hosts ip_addresses lockdown/account lockdown/host proxies search \
+             health hosts ip_addresses lockdown/account lockdown/host proxies search/hosts search/detections search/accounts  \
              sensor_token settings subnets tagging threatFeeds traffic usage/detect users \
              vectramatch/enablement vectra-match/status vectramatch/availabledevices vectra-match/rules \
               vectramatch/assignment vectra-match/alertstats vsensor'.split()

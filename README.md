@@ -11,7 +11,7 @@ Example for vectra_api_client to export and import data to/from csv format
 * search/\[hosts,detection,accounts]
 
 
-## Usage:
+# How ot run:
   1.Configure the file "./src/conf/config.json". Refer configuration:
   
   2.  Refer to INPUT section of the document:
@@ -35,7 +35,7 @@ options:
                         Mode of operaton. Most of extension support only get mode. The overall options are: get post patch put delete.
 ```  
 
-* Example:
+# Example:
   -  search/hosts :
 ```
 # python .\run.py -e search/hosts -m get -q host.name:7_ghost

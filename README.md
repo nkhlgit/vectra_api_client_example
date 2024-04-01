@@ -73,7 +73,9 @@ For POST and PATCH configure the file at location specified in key "work_dir" in
   * description:description
   * type: host or domainor ip
   * members: menebers of grousp. For hosts please use the id of host.
-     Note: if the folwing feild ( ID or Name or description) must be present .
+  *   member_name: name of the memeber. It apply onlky to host type.
+
+    
 
 ## Output
   The files are saved in conf directory with 

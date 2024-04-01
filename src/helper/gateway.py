@@ -1,8 +1,8 @@
 import json
 from helper.settings import conf, pnt, constants 
 import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+#from requests.packages.urllib3.exceptions import InsecureRequestWarning
+#requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 import logging
 log = logging.getLogger(__name__)

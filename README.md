@@ -55,7 +55,9 @@ For POST and PATCH configure the file at location specified in key "work_dir" in
 - File Format: Refer to input feild from API document as set them as column.
   Once extra columns is 'member_name' to add the memebers of specific name.
 
-#### Groups
+#### Groups 
+* Feature:  "member_name"  alow to add hosts by name and it supports "wildcard"(*) 
+
 * push: push_groups_csv: The data to create new extension objects per row in file.
   Mandotery : Name
   * name: Name of the group

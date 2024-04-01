@@ -18,7 +18,7 @@ Tested extension(mode) are:
   4.  Python3 run.py  -e <extension> -m <mode>.
      
 ```
-python .\run.py --help
+# python .\run.py --help
 start_vapi_client
 usage: run.py [-h] --extension EXTENSION --mode {get,post,patch,put,delete}
 
@@ -33,6 +33,39 @@ options:
   --mode {get,post,patch,put,delete}, -m {get,post,patch,put,delete}
                         Mode of operaton. Most of extension support only get mode. The overall options are: get post patch put delete.
 ```  
+
+* Example:
+  -  search/hosts :
+```
+# python .\run.py -e search/hosts -m get -q host.name:7_ghost
+start_vapi_client
+{'extension': 'search/hosts', 'mode': 'get', 'query': 'host.name:7_ghost'}
+sending GET with query={'query_string': 'host.name:7_ghost'} request to url_final='https://myserver/api/v2.5/search/hosts'
+saved the result in /tmp/api_work/output_search_hosts_240402013418_json.json
+saved the result in /tmp/api_work/output_search_hosts_240402013418_csv.csv
+FYI only: No member_name queried
+stop_vapi_client
+Script finished! The operation logs are /tmp/api_work/api_logs.log
+```
+  -  groups
+```
+python .\run.py -e groups -m post  
+start_vapi_client
+args are : {'extension': 'groups', 'mode': 'post', 'query': None}
+sending GET with query={'query_string': 'host.name:"13_ghost_1"'} request to url_final='https://myserver/api/v2.5/search/hosts'
+sending GET with query={'query_string': 'host.name:11_ghost_*'} request to url_final='https://myserver/api/v2.5/search/hosts'
+sending POST request to url_final='https://192.168.52.185/api/v2.5/groups'
+Request sucessfull: response.text='{"group": {"id": 31}}'
+sending GET with query={'query_string': 'host.name:"12_ghost_1"'} request to url_final='https://myserver/api/v2.5/search/hosts'
+sending GET with query={'query_string': 'host.name:10_ghost_*'} request to url_final='https://myserver/api/v2.5/search/hosts'
+sending POST request to url_final='https://192.168.52.185/api/v2.5/groups'
+Request sucessfull: response.text='{"group": {"id": 32}}'
+saved the result in /tmp/api_work/output_groups_member_name_searched_240402013951_json.json
+saved the result in /tmp/api_work/output_groups_member_name_searched_240402013951_csv.csv
+4 memeber names searched. result are saved in :groups_member_name_searched
+stop_vapi_client
+Script finished! The operation logs are /tmp/api_work/api_logs.log
+```
 
 
 ## Configuration:

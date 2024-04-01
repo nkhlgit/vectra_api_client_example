@@ -46,6 +46,7 @@ class pathfinder():
         output_file_suffix = conf.get('output_file_suffix', 'output')
         now = datetime.datetime.now()
         time_str =  now.strftime("%y%m%d%H%M%S")
+        ext = ext.replace('/','_')
         output_file_suffix_ext = f'{output_file_suffix}_{ext}_{time_str}'
         for t in self.file_type:
             output_file_name = f'{output_file_suffix_ext}_{t}.{t}'

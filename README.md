@@ -16,7 +16,7 @@ Example for vectra_api_client to export and import data to/from csv format
   
   2.  Refer to INPUT section of the document:
  
-  4.  Python3 run.py  -e <extension> -m <mode>.
+  4.  Python3  run.py  --extension EXTENSION --mode {get,post,patch,put,delete}
      
 ```
 # python .\run.py --help

@@ -98,7 +98,7 @@ For POST and PATCH configure the file at location specified in key "work_dir" in
   * description:description
   * type: host or domainor ip
   * members: menebers of groups. For hosts please use the id of host.
-  * member_name: name of the memeber. It apply onlky to host type.
+  * member_name: name of the memeber. It apply only to host type. I allows wildcard.
     
 * patch: patch_groups_csv The data to update extension objects per row in file.
   Mandotery: One of id, name, description (perference in exact sequence) to find the refernce group.
@@ -107,7 +107,7 @@ For POST and PATCH configure the file at location specified in key "work_dir" in
   * description:description
   * type: host or domainor ip
   * members: menebers of grousp. For hosts please use the id of host.
-  *   member_name: name of the memeber. It apply onlky to host type.
+  * member_name:  name of the memeber. It apply only to host type. I allows wildcard.
 
     
 

@@ -12,20 +12,26 @@ class base_extension():
     def __init__(self, **kargs) -> None:
         self.kargs = kargs
         self.ext = self.kargs.get('extension', None)
+        self.clmns_list = 'members members_name'.split()
+        self.payload_plus=  {} if self.kargs.get('payload', None) is None else json.loads(self.kargs.get('payload'))
         if self.kargs.get('query', None) is not None:
-           self.query =  {'query_string': self.kargs.get('query')}
+            self.payload_plus =  self.payload_plus.update({'query_string': self.kargs.get('query')})
+        self.clmns_bool = None
+        self.clmns_dict = None
 
-    def get(self):
-        data_list = p.get_many(self.ext, self.query)
-        pf.save_to_file(self.ext , data_list)
 
-    def post(self):    
+    def get_api(self, save : bool= True) :
+        data_list = p.get_many(self.ext, self.payload_plus)
+        if save:
+            pf.save_to_file(self.ext , data_list)
+
+    def post_api(self):    
         data_list= pf.get_input('post', self.ext)
         for data in data_list:
-            clean_data = self.get_clean_data(data, 'post')
+            clean_data = self.tosend_clean_data(data, 'post')
             p.post_one(self.ext, clean_data)
     
-    def delete(self):    
+    def delete_api(self):    
         data_list= pf.get_input('delete', self.ext)
         for data in data_list:
             #cmnt: If id in not present in data then look for other key for search.
@@ -52,7 +58,7 @@ class base_extension():
                     continue
             p.delete_one(self.ext, data_id)
 
-    def patch(self):
+    def patch_api(self):
         data_list = pf.get_input('patch', self.ext)
         for data in data_list:
             #cmnt: If id in not present in data then look for other key for search.
@@ -77,7 +83,7 @@ class base_extension():
                 else:
                     log.error(f'can not find the {self.ext=} id in {query_1=}')
                     continue
-            clean_data = self.get_clean_data(data, 'patch')
+            clean_data = self.tosend_clean_data(data, 'patch')
             p.patch_one(self.ext, data_id, clean_data)
 
     def search_manager(self, query_string ):
@@ -90,24 +96,57 @@ class base_extension():
         log.debug(search_results)
         return search_results
     
-    def data_typing(self, data : dict) -> dict:
-        if self.clmns_bool or self.clmns_bool is not None:
-            for col_bool in self.clmns_bool:
-                if isinstance( (b := data.get(col_bool, None)), str):
-                    b = b.strip().lower()
-                    if b == 'true':
-                        data[col_bool] = True
-                    else:
-                        data[col_bool] = False
-        if self.clmns_dict or self.clmns_dict is not None:
-            for col_dict in self.clmns_dict:
-                if isinstance((ac := data.get(col_dict, None)), str):
-                    data[col_dict] = json.loads(ac.replace("'","\""))
-        return data
-            
+    def bool_typing(self, b) -> dict:
+        if isinstance( b , str):
+            b = b.strip().lower()
+            if b == 'true':
+                return True
+            else:
+                return False
+        elif isinstance( b , bool):
+            return b
+        else:
+            return b
 
-    #doc get_clean_data make ata clean for post or put or patch
-    def get_clean_data(self, data : dict, mode : str = 'patch') -> dict:
+    def dict_typing(self, ac) -> dict:
+        if isinstance(ac , str):
+            return json.loads(ac.replace("'","\""))
+        elif isinstance(ac , dict):
+            return ac
+        else:
+            return {}
+
+    def list_typing(self, members) -> dict:
+        if isinstance(members, str):
+            members = members.strip()
+            if members.startswith('[') and members.endswith(']') :
+                members = members.lstrip('[')
+                members = members.rstrip(']')
+            members = members.split(',')
+            print(members)
+        elif not isinstance(members, list):
+            members = [members]
+        return list(filter(None, members))
+
+
+    def data_typing(self, data : dict) -> dict:
+        """set proper data type for reay to send"""
+        #col_name and typing_fun
+        colss = (self.clmns_bool, self.clmns_dict, self.clmns_list )
+        funs = (self.bool_typing, self.dict_typing, self.list_typing )
+        for cols, fun in zip(colss,funs):
+            if not cols:
+                continue
+            for col in cols:
+                if col not in data:
+                    continue
+                data[col] = fun(data.get(col))
+        return data
+
+    
+    def tosend_clean_data(self, data : dict, mode : str) -> dict:
+        """tosend_clean_data make ata clean for post or put or patch"""
+        data = self.data_typing(data)
         if mode == 'patch':
             for k,v in data:
                 if v or v is None:
@@ -116,7 +155,6 @@ class base_extension():
         for k in drop_key:
             if k in data:
                 del data[k]
-        data = self.data_typing(data)
         return data
     
     def log_stats(self) -> None:
@@ -138,18 +176,11 @@ class groups(base_extension):
         self.valid_columns = 'name description type members'.split()
         self.data_prim_keys = 'name description'.split()   
 
-    #doc def get_clean_data(self,data): prepare data to send for upload
-    def get_clean_data(self, data : dict, mode : str = 'patch') -> dict:
-        #doc this apply only for host
-        if data.get('members', None) is not None:
-            if not isinstance(data['members'], list): 
-                data['members'] = data.get('members').split(',')
-        else:
-            data['memeber'] = []
-        if data['type'] == 'host' and (memebers_names_str := data.get('member_name', None)) is not None:
-            host_tub = {}
+    #doc def tosend_clean_data(self,data): prepare data to send for upload
+    def tosend_clean_data(self, data : dict, mode : str) -> dict:
+        data = self.data_typing(data)
+        if data['type'] == 'host' and (memebers_names := data.get('members_name', None)) is not None:
             memeber_ids = []
-            memebers_names = memebers_names_str.split(',')
             for memeber_name in memebers_names:
                 name_ids = []
                 memeber_name = memeber_name.strip()
@@ -189,8 +220,8 @@ class rules(base_extension):
         self.clmns_bool = 'enabled is_whitelist template'.split()
         self.clmns_dict =  'source_conditions additional_conditions'.split()
 
-    #doc def get_clean_data(self,data): prepare data to send for upload
-    def get_clean_data(self, data : dict, mode : str = 'patch') -> dict:
+    #doc def tosend_clean_data(self,data): prepare data to send for upload
+    def tosend_clean_data(self, data : dict, mode : str = 'patch') -> dict:
         #doc this apply only for host
         data = self.data_typing(data)
         clean_data = {key: data[key] for key in self.valid_columns}

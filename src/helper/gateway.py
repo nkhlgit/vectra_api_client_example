@@ -1,8 +1,8 @@
 import json
 from helper.settings import conf, pnt, constants 
 import requests
-#from requests.packages.urllib3.exceptions import InsecureRequestWarning
-#requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 import logging
 log = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class portal():
         result_data = []
         send_query = 'yes'
         url_final = self.rq['vec_base_url'] + f'/{ext}'
-        msg = f'sending GET with {query=} request to {url_final=}'
+        msg = f'sending GET with {payload=} request to {url_final=}'
         log.info(msg)
         print(pnt.info(msg))
         while send_query is not None:
@@ -52,7 +52,7 @@ class portal():
                 else:
                     err_msg = f'Got some error in response: {response.text=}'
                     print(pnt.error(err_msg))
-                    log.error(err_msg)
+                    log.fatal(err_msg)
                     break
             except Exception as e:
                 err_msg = f'Error offcured in request: {e}'

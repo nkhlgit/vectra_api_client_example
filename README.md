@@ -36,6 +36,31 @@ options:
 ```  
 
 # Example:
+- hosts - with default payload:
+```
+python .\run.py -e hosts -m get
+start_vapi_client
+args are : {'extension': 'hosts', 'mode': 'get', 'query': None, 'payload': None}
+sending GET with payload={'page_size': 500, 'page': 0} request to url_final='https://myserver/api/v2.5/hosts'
+saved the result in /tmp/api_work/output_hosts_240411233553_json.json
+saved the result in /tmp/api_work/output_hosts_240411233553_csv.csv
+FYI only: No member_name queried
+stop_vapi_client
+Script finished! The operation logs are /tmp/api_work/api_logs.log
+```
+- hosts - With updated payload
+```
+#python .\run.py -e hosts -m get -p  '{\"state\":\"active\"}'
+
+start_vapi_client
+args are : {'extension': 'hosts', 'mode': 'get', 'query': None, 'payload': '{"state":"active"}'}
+sending GET with payload={'page_size': 500, 'page': 0, 'state': 'active'} request to url_final='https://myserver/api/v2.5/hosts'
+saved the result in /tmp/api_work/output_hosts_240411233047_json.json
+saved the result in /tmp/api_work/output_hosts_240411233047_csv.csv
+FYI only: No member_name queried
+stop_vapi_client
+Script finished! The operation logs are /tmp/api_work/api_logs.log
+``` 
   -  search/hosts :
 ```
 # python .\run.py -e search/hosts -m get -q host.name:7_ghost

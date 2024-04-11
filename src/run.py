@@ -47,6 +47,11 @@ def parse_args() -> dict:
                       help=f'To use query with search extension',
                       required=False, 
                       )
+    argy.add_argument("--payload", "-p",
+                      type = str.lower,
+                      help=f'To update the default payload',
+                      required=False, 
+                      )
     args = argy.parse_args()
     return args
 

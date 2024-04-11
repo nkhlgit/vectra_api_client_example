@@ -2,7 +2,6 @@ import os
 import json
 import csv
 from pathlib import Path
-from helper.csv_util import to_csv
 from .settings import conf, pnt
 import logging
 import datetime
@@ -35,8 +34,7 @@ class pathfinder():
         field_names = data_list[0].keys()
         csv_writer = csv.DictWriter(output_file, fieldnames=field_names)
         csv_writer.writeheader()
-        data_list_csv = to_csv(ext ,data_list)
-        csv_writer.writerows(data_list_csv)
+        csv_writer.writerows(data_list)
 
     def save_to_file(self,ext : str, data_list : list) -> None:
         work_dir = self.get_work_dir(create= True)

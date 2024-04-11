@@ -13,14 +13,14 @@ p = portal()
 class extension_manager():
     def __init__(self, **kargs) -> None:
         self.kargs = kargs
-        exts : dict = get_exts()
-        self.ext : dict = exts.get(self.kargs.get('extension', None), None)
+        self.exts : dict = get_exts()
+        self.ext : dict = self.exts.get(self.kargs.get('extension', None), None)
 
     def verify_args(self) -> bool: 
         arg_ext = self.kargs.get("extension", None)
         arg_mode = self.kargs.get('mode', None)
         if self.ext is None:
-            text = f'The supported extensions are:\n\t <{" ".join(self.exts.keys())}>.\n You entered method <{arg_ext}>'
+            text = f'You entered extension : {arg_ext}. \n The supported extensions are:\n\t {" ".join(self.exts.keys())}.\n >'
             log.error(text)
             print(pnt.error(text))
             return False
@@ -40,11 +40,11 @@ class extension_manager():
         e= self.ext.get('cls', None)(**self.kargs)
         match self.kargs.get('mode'):
             case 'get':
-                e.get()
+                e.get_api(save=True)
             case 'post':
-                e.post()
+                e.post_api()
             case 'patch':
-                e.patch()
+                e.patch_api()
             case 'delete':
-                e.delete()
+                e.delete_api()
         e.log_stats()

@@ -6,5 +6,6 @@
     "vec_api_version" :  "v2.5",
     "work_dir": "/tmp/api_work", 
     "output_file_suffix" : "output",
-    "push_csv": "push_csv.csv"
+    "push_csv": "push_csv.csv",
+    "loglevel": "info"
 }

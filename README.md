@@ -2,7 +2,7 @@
 Example for vectra_api_client to export and import data to/from csv format
 
 ## Important Note: 
-  This is not Vectra's official repo. I have created it out of my own interest. It's  pupose is to show example to perform  bulk export and import data to and from vectra( with VSC file) quaderent UX using API. I have performed very basic testing. Please read the code carefully and do your own research and testing before adopting it. 
+  This is not Vectra's official repo. I have created it out of my own interest. It's  pupose is to show example to perform  bulk export and import data to and from vectra( with csv file) quaderent UX using API. I have performed very basic testing. Please read the code carefully and do your own research and testing before adopting it. 
 
 # Tested extension(mode) are:
 * hosts (get)

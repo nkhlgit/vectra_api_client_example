@@ -54,7 +54,7 @@ Script finished! The operation logs are /tmp/api_work/api_logs.log
 ```
 - hosts - With updated payload
 ```
-#python .\run.py -e hosts -m get -p  '{\"state\":\"active\"}'
+python .\run.py -e hosts -m get -p  '{\"state\":\"active\"}'
 
 start_vapi_client
 args are : {'extension': 'hosts', 'mode': 'get', 'query': None, 'payload': '{"state":"active"}'}

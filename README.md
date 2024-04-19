@@ -37,12 +37,13 @@ options:
   --query QUERY, -q QUERY
                         To use query with search extension
   --payload PAYLOAD, -p PAYLOAD
-                        To update the default payload```  
+                        To update the default payload
+```  
 
 # Example:
 - hosts - with default payload:
 ```
-python .\run.py -e hosts -m get
+# python .\run.py -e hosts -m get
 start_vapi_client
 args are : {'extension': 'hosts', 'mode': 'get', 'query': None, 'payload': None}
 sending GET with payload={'page_size': 500, 'page': 0} request to url_final='https://myserver/api/v2.5/hosts'
@@ -54,7 +55,7 @@ Script finished! The operation logs are /tmp/api_work/api_logs.log
 ```
 - hosts - With updated payload
 ```
-python .\run.py -e hosts -m get -p  '{\"state\":\"active\"}'
+# python .\run.py -e hosts -m get -p  '{\"state\":\"active\"}'
 
 start_vapi_client
 args are : {'extension': 'hosts', 'mode': 'get', 'query': None, 'payload': '{"state":"active"}'}
@@ -67,7 +68,7 @@ Script finished! The operation logs are /tmp/api_work/api_logs.log
 ``` 
   -  search/hosts :
 ```
->> python .\run.py -e search/hosts -m get -q host.name:7_ghost
+# python .\run.py -e search/hosts -m get -q host.name:7_ghost
 start_vapi_client
 {'extension': 'search/hosts', 'mode': 'get', 'query': 'host.name:7_ghost'}
 sending GET with query={'query_string': 'host.name:7_ghost'} request to url_final='https://myserver/api/v2.5/search/hosts'

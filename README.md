@@ -67,7 +67,7 @@ Script finished! The operation logs are /tmp/api_work/api_logs.log
 ``` 
   -  search/hosts :
 ```
-# python .\run.py -e search/hosts -m get -q host.name:7_ghost
+>> python .\run.py -e search/hosts -m get -q host.name:7_ghost
 start_vapi_client
 {'extension': 'search/hosts', 'mode': 'get', 'query': 'host.name:7_ghost'}
 sending GET with query={'query_string': 'host.name:7_ghost'} request to url_final='https://myserver/api/v2.5/search/hosts'

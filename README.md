@@ -80,7 +80,7 @@ Script finished! The operation logs are /tmp/api_work/api_logs.log
 ```
   -  groups
 ```
-python .\run.py -e groups -m post  
+# python .\run.py -e groups -m post  
 start_vapi_client
 args are : {'extension': 'groups', 'mode': 'post', 'query': None}
 sending GET with query={'query_string': 'host.name:"13_ghost_1"'} request to url_final='https://myserver/api/v2.5/search/hosts'
